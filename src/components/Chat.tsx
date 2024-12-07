@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext';
 import { Message, User } from '../types';
 import { motion } from 'framer-motion';
 import { Send, Settings, LogOut, Check, CheckCheck } from 'lucide-react';
-import toast from 'react-hot-toast';
 import ViewAvatar from './ViewAvatar';
 
 const POLLING_INTERVAL = 1000; // 1 second
@@ -135,8 +134,8 @@ export default function Chat() {
 
     const newMessage: Message = {
       id: Date.now().toString(),
-      sender: { id: currentUser.username },
-      receiver: { id: selectedUser.username },
+      sender: currentUser,
+      recipient: selectedUser,
       content: message.trim(),
       createdAt: Date.now(),
       read: false
@@ -157,7 +156,7 @@ export default function Chat() {
     if (selectedUser && currentUser) {
       const updatedMessages = messages.map(msg => {
         if (msg.sender.id === selectedUser.username && 
-            msg.receiver.id === currentUser.username && 
+            msg.recipient.id === currentUser.username && 
             !msg.read) {
           return { ...msg, read: true };
         }
@@ -173,8 +172,8 @@ export default function Chat() {
 
   const filteredMessages = messages.filter(
     msg => 
-      (msg.sender.id === currentUser?.username && msg.receiver.id === selectedUser?.username) ||
-      (msg.sender.id === selectedUser?.username && msg.receiver.id === currentUser?.username)
+      (msg.sender.id === currentUser?.id && msg.recipient.id === selectedUser?.id) ||
+      (msg.sender.id === selectedUser?.id && msg.recipient.id === currentUser?.id)
   );
 
   return (
@@ -291,25 +290,23 @@ export default function Chat() {
                   key={msg.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`flex ${msg.sender.id === currentUser?.username ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${msg.sender.id === currentUser?.id ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
                     className={`max-w-[70%] p-3 rounded-lg ${
-                      msg.sender.id === currentUser?.username
+                      msg.sender.id === currentUser?.id
                         ? 'bg-indigo-600 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
                     }`}
                   >
                     <p>{msg.content}</p>
                     <div className={`flex items-center justify-end gap-1 mt-1 text-xs ${
-                      msg.sender.id === currentUser?.username
+                      msg.sender.id === currentUser?.id
                         ? 'text-indigo-200'
                         : 'text-gray-500 dark:text-gray-400'
                     }`}>
                       <span>{new Date(msg.createdAt).toLocaleTimeString()}</span>
-                      {msg.sender.id === currentUser?.username && (
-                        msg.read ? <CheckCheck size={14} /> : <Check size={14} />
-                      )}
+                      {msg.sender.id === currentUser?.id && (msg.read ? <CheckCheck size={14} /> : <Check size={14} />)}
                     </div>
                   </div>
                 </motion.div>
