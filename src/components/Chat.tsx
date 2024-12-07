@@ -7,7 +7,6 @@ import { Send, Settings, LogOut, Check, CheckCheck } from 'lucide-react';
 import ViewAvatar from './ViewAvatar';
 
 const POLLING_INTERVAL = 1000; // 1 second
-const TYPING_TIMEOUT = 3000; // 3 seconds
 
 function UserAvatar({ name, avatar, onClick, isOnline }: { 
   name: string; 
@@ -254,30 +253,15 @@ export default function Chat() {
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {filteredMessages.map(msg => (
-                <motion.div
-                  key={msg.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`flex ${msg.sender.id === currentUser?.id ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[70%] p-3 rounded-lg ${
-                      msg.sender.id === currentUser?.id
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
-                    }`}
-                  >
+                <div key={msg.id} className={`flex ${msg.sender.id === currentUser?.id ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[70%] p-3 rounded-lg ${msg.sender.id === currentUser?.id ? 'bg-indigo-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'}`}>
                     <p>{msg.content}</p>
-                    <div className={`flex items-center justify-end gap-1 mt-1 text-xs ${
-                      msg.sender.id === currentUser?.id
-                        ? 'text-indigo-200'
-                        : 'text-gray-500 dark:text-gray-400'
-                    }`}>
+                    <div className={`flex items-center justify-end gap-1 mt-1 text-xs ${msg.sender.id === currentUser?.id ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400'}`}>
                       <span>{new Date(msg.createdAt).toLocaleTimeString()}</span>
                       {msg.sender.id === currentUser?.id && (msg.read ? <CheckCheck size={14} /> : <Check size={14} />)}
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
               <div ref={messagesEndRef} />
             </div>
