@@ -8,13 +8,14 @@ import { ArrowLeft } from 'lucide-react';
 export default function Register() {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (register(name, username, password)) {
+    if (register(name, username, email, password)) {
       toast.success('Registration successful!');
       navigate('/chat');
     } else {
@@ -80,6 +81,20 @@ export default function Register() {
                 onChange={(e) => setUsername(e.target.value)}
                 className="mt-1 block w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
                 placeholder="johndoe"
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="text-white/90">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
+                placeholder="johndoe@example.com"
               />
             </div>
             <div>
