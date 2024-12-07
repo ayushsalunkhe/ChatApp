@@ -7,10 +7,15 @@ import ViewAvatar from './ViewAvatar';
 
 const POLLING_INTERVAL = 1000; // 1 second
 
-function UserAvatar({ name, avatar, onClick, isOnline }: { 
+function UserAvatar({ 
+  name, 
+  avatar, 
+  onClick, 
+  isOnline 
+}: { 
   name: string; 
   avatar?: string; 
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void; 
   isOnline?: boolean;
 }) {
   return (
@@ -166,14 +171,14 @@ export default function Chat() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <UserAvatar
-                name={user.name}
-                avatar={user.avatar}
-                onClick={() => handleViewAvatar(user)}
-                isOnline={isUserOnline(user)}
+                name={users.name}
+                avatar={users.avatar}
+                onClick={() => handleViewAvatar(users)}
+                isOnline={isUserOnline(users)}
               />
               <div>
-                <h2 className="font-semibold text-gray-900 dark:text-white">{user.name}</h2>
-                <p className="text-sm text-gray-500">@{user.username}</p>
+                <h2 className="font-semibold text-gray-900 dark:text-white">{users.name}</h2>
+                <p className="text-sm text-gray-500">@{users.username}</p>
               </div>
             </div>
             <div className="flex space-x-2">
