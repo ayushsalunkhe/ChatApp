@@ -15,12 +15,14 @@ export default function Register() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (register(name, username, email, password)) {
-      toast.success('Registration successful!');
-      navigate('/chat');
-    } else {
-      toast.error('Username already exists!');
-    }
+    register(name, username, email, password)
+      .then(() => {
+        toast.success('Registration successful!');
+        navigate('/chat');
+      })
+      .catch(() => {
+        toast.error('Registration failed!');
+      });
   };
 
   return (
