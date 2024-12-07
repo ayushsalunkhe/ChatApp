@@ -88,14 +88,17 @@ export default function Chat() {
     navigate('/login');
   };
 
-  const isUserOnline = (user: User) => {
-    return user.lastSeen && Date.now() - user.lastSeen < 60000; // Within last minute
+  const isUserOnline = (user: User): boolean => {
+    return !!(user.lastSeen && Date.now() - user.lastSeen < 60000); // Explicitly cast to boolean
   };
+  
 
   const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMessage(e.target.value);
-    setIsTyping(Boolean(e.target.value.length));
+    const value = e.target.value;
+    setMessage(value);
+    setIsTyping(value.length > 0); // Explicitly return boolean
   };
+  
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,7 +123,7 @@ export default function Chat() {
   const handleViewAvatar = (user: User) => {
     setViewingAvatar({ isOpen: true, user });
   };
-  
+
   // Mark messages as read
   useEffect(() => {
     if (selectedUser && currentUser) {
@@ -163,14 +166,14 @@ export default function Chat() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <UserAvatar
-                name={currentUser?.name || ''}
-                avatar={currentUser?.avatar}
-                onClick={() => currentUser && handleViewAvatar(currentUser)}
-                isOnline={true}
+                name={user.name}
+                avatar={user.avatar}
+                onClick={() => handleViewAvatar(user)}
+                isOnline={isUserOnline(user)}
               />
               <div>
-                <h2 className="font-semibold text-gray-900 dark:text-white">{currentUser?.name}</h2>
-                <p className="text-sm text-gray-500">@{currentUser?.username}</p>
+                <h2 className="font-semibold text-gray-900 dark:text-white">{user.name}</h2>
+                <p className="text-sm text-gray-500">@{user.username}</p>
               </div>
             </div>
             <div className="flex space-x-2">
@@ -217,6 +220,7 @@ export default function Chat() {
                     `@${user.username}`
                   )}
                 </p>
+
               </div>
             </button>
           ))}
