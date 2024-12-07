@@ -63,19 +63,19 @@ export default function Profile() {
       return;
     }
 
-    const success = updateProfile(updates, newPassword ? oldPassword : undefined);
-
-    if (success) {
-      toast.success('Profile updated successfully');
-      setOldPassword('');
-      setNewPassword('');
-    } else {
-      if (newPassword) {
-        toast.error('Current password is incorrect');
-      } else {
-        toast.error('Username is already taken');
-      }
-    }
+    updateProfile(updates, oldPassword)
+      .then(() => {
+        toast.success('Profile updated successfully!');
+        setOldPassword('');
+        setNewPassword('');
+      })
+      .catch(() => {
+        if (newPassword) {
+          toast.error('Current password is incorrect');
+        } else {
+          toast.error('Username is already taken');
+        }
+      });
   };
 
   const handleDeleteAccount = () => {
@@ -84,12 +84,14 @@ export default function Profile() {
       return;
     }
 
-    if (deleteAccount(deletePassword)) {
-      toast.success('Account deleted successfully');
-      navigate('/login');
-    } else {
-      toast.error('Incorrect password');
-    }
+    deleteAccount(deletePassword)
+      .then(() => {
+        toast.success('Account deleted successfully');
+        navigate('/login');
+      })
+      .catch(() => {
+        toast.error('Incorrect password');
+      });
   };
 
   return (
