@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Message, User } from '../types';
-import { motion } from 'framer-motion';
 import { Send, Settings, LogOut, Check, CheckCheck } from 'lucide-react';
 import ViewAvatar from './ViewAvatar';
 
@@ -46,10 +45,14 @@ export default function Chat() {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [viewingAvatar, setViewingAvatar] = useState<{isOpen: boolean; user: User | null}>({
+  const [viewingAvatar, setViewingAvatar] = useState<{
+    isOpen: boolean;
+    user: User | null;
+  }>({
     isOpen: false,
-    user: null
+    user: null,
   });
+  
   const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
@@ -91,7 +94,7 @@ export default function Chat() {
 
   const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
-    setIsTyping(e.target.value.length > 0);
+    setIsTyping(Boolean(e.target.value.length));
   };
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -117,7 +120,7 @@ export default function Chat() {
   const handleViewAvatar = (user: User) => {
     setViewingAvatar({ isOpen: true, user });
   };
-
+  
   // Mark messages as read
   useEffect(() => {
     if (selectedUser && currentUser) {
@@ -199,10 +202,10 @@ export default function Chat() {
               <UserAvatar
                 name={user.name}
                 avatar={user.avatar}
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent) => {
                   e.stopPropagation();
                   handleViewAvatar(user);
-                }}
+                }}                
                 isOnline={isUserOnline(user)}
               />
               <div className="text-left flex-1">
