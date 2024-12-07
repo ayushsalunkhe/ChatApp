@@ -14,12 +14,14 @@ export default function Login() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (login(username, password)) {
-      toast.success('Login successful!');
-      navigate('/chat');
-    } else {
-      toast.error('Invalid credentials!');
-    }
+    login(username, password)
+      .then(() => {
+        toast.success('Login successful!');
+        navigate('/chat');
+      })
+      .catch(() => {
+        toast.error('Invalid credentials!');
+      });
   };
 
   return (
