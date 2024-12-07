@@ -135,10 +135,10 @@ export default function Chat() {
 
     const newMessage: Message = {
       id: Date.now().toString(),
-      senderId: currentUser.username,
-      receiverId: selectedUser.username,
+      sender: { id: currentUser.username },
+      receiver: { id: selectedUser.username },
       content: message.trim(),
-      timestamp: Date.now(),
+      createdAt: Date.now(),
       read: false
     };
 
@@ -156,8 +156,8 @@ export default function Chat() {
   useEffect(() => {
     if (selectedUser && currentUser) {
       const updatedMessages = messages.map(msg => {
-        if (msg.senderId === selectedUser.username && 
-            msg.receiverId === currentUser.username && 
+        if (msg.sender.id === selectedUser.username && 
+            msg.receiver.id === currentUser.username && 
             !msg.read) {
           return { ...msg, read: true };
         }
@@ -173,8 +173,8 @@ export default function Chat() {
 
   const filteredMessages = messages.filter(
     msg => 
-      (msg.senderId === currentUser?.username && msg.receiverId === selectedUser?.username) ||
-      (msg.senderId === selectedUser?.username && msg.receiverId === currentUser?.username)
+      (msg.sender.id === currentUser?.username && msg.receiver.id === selectedUser?.username) ||
+      (msg.sender.id === selectedUser?.username && msg.receiver.id === currentUser?.username)
   );
 
   return (
@@ -291,23 +291,23 @@ export default function Chat() {
                   key={msg.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`flex ${msg.senderId === currentUser?.username ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${msg.sender.id === currentUser?.username ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
                     className={`max-w-[70%] p-3 rounded-lg ${
-                      msg.senderId === currentUser?.username
+                      msg.sender.id === currentUser?.username
                         ? 'bg-indigo-600 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
                     }`}
                   >
                     <p>{msg.content}</p>
                     <div className={`flex items-center justify-end gap-1 mt-1 text-xs ${
-                      msg.senderId === currentUser?.username
+                      msg.sender.id === currentUser?.username
                         ? 'text-indigo-200'
                         : 'text-gray-500 dark:text-gray-400'
                     }`}>
-                      <span>{new Date(msg.timestamp).toLocaleTimeString()}</span>
-                      {msg.senderId === currentUser?.username && (
+                      <span>{new Date(msg.createdAt).toLocaleTimeString()}</span>
+                      {msg.sender.id === currentUser?.username && (
                         msg.read ? <CheckCheck size={14} /> : <Check size={14} />
                       )}
                     </div>
