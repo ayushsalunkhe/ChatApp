@@ -40,7 +40,7 @@ function UserAvatar({ name, avatar, onClick, isOnline }: {
 }
 
 export default function Chat() {
-  const { currentUser, logout, updateLastSeen } = useAuth();
+  const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -51,7 +51,7 @@ export default function Chat() {
     isOpen: false,
     user: null
   });
-  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     if (!currentUser) {
@@ -72,11 +72,10 @@ export default function Chat() {
     // Set up polling for updates
     const interval = setInterval(() => {
       loadData();
-      updateLastSeen();
     }, POLLING_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [currentUser, navigate, updateLastSeen]);
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -91,41 +90,9 @@ export default function Chat() {
     return user.lastSeen && Date.now() - user.lastSeen < 60000; // Within last minute
   };
 
-  const isUserTyping = (user: User) => {
-    return user.isTyping && 
-           user.isTyping.to === currentUser?.username && 
-           Date.now() - user.isTyping.timestamp < TYPING_TIMEOUT;
-  };
-
-  const updateTypingStatus = () => {
-    if (!currentUser || !selectedUser) return;
-
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const userIndex = users.findIndex((u: User) => u.username === currentUser.username);
-    
-    if (userIndex !== -1) {
-      users[userIndex].isTyping = {
-        to: selectedUser.username,
-        timestamp: Date.now()
-      };
-      localStorage.setItem('users', JSON.stringify(users));
-    }
-
-    // Clear typing status after timeout
-    if (typingTimeout) clearTimeout(typingTimeout);
-    setTypingTimeout(setTimeout(() => {
-      const updatedUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      const idx = updatedUsers.findIndex((u: User) => u.username === currentUser.username);
-      if (idx !== -1) {
-        delete updatedUsers[idx].isTyping;
-        localStorage.setItem('users', JSON.stringify(updatedUsers));
-      }
-    }, TYPING_TIMEOUT));
-  };
-
-  const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
-    updateTypingStatus();
+    setIsTyping(e.target.value.length > 0);
   };
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -134,9 +101,10 @@ export default function Chat() {
 
     const newMessage: Message = {
       id: Date.now().toString(),
-      sender: currentUser,
-      recipient: selectedUser,
+      sender: currentUser, 
+      recipient: selectedUser, 
       content: message.trim(),
+      type: 'text', 
       createdAt: Date.now(),
       read: false
     };
@@ -241,7 +209,7 @@ export default function Chat() {
               <div className="text-left flex-1">
                 <h3 className="font-medium text-gray-900 dark:text-white">{user.name}</h3>
                 <p className="text-sm text-gray-500">
-                  {isUserTyping(user) ? (
+                  {isTyping && user.username === selectedUser?.username ? (
                     <span className="text-indigo-500">typing...</span>
                   ) : (
                     `@${user.username}`
@@ -269,7 +237,7 @@ export default function Chat() {
                 <div>
                   <h2 className="font-semibold text-gray-900 dark:text-white">{selectedUser.name}</h2>
                   <p className="text-sm text-gray-500">
-                    {isUserTyping(selectedUser) ? (
+                    {isTyping ? (
                       <span className="text-indigo-500">typing...</span>
                     ) : isUserOnline(selectedUser) ? (
                       <span className="text-green-500">online</span>
@@ -320,7 +288,7 @@ export default function Chat() {
                 <input
                   type="text"
                   value={message}
-                  onChange={handleMessageChange}
+                  onChange={handleTyping}
                   placeholder="Type a message..."
                   className="flex-1 p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
                 />
