@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #00a884;
+  --primary-dark: #008f72;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  .chat-bubble {
+    @apply p-3 rounded-lg max-w-[75%] break-words relative;
+  }
+  
+  .chat-bubble-sent {
+    @apply bg-primary text-white ml-auto rounded-tr-none;
+  }
+  
+  .chat-bubble-received {
+    @apply bg-white dark:bg-gray-700 dark:text-white rounded-tl-none;
+  }
+  
+  .chat-background {
+    background-image: url('https://i.pinimg.com/originals/97/c0/07/97c00759d90d786d9b6096d274ad3e07.png');
+    background-size: cover;
+    background-position: center;
+    @apply bg-opacity-10 dark:bg-opacity-5;
+  }
+  
+  .dark .chat-background {
+    background-image: url('https://i.pinimg.com/originals/8f/ba/cb/8fbacbd464e996966eb9d4a6b7a9c21e.jpg');
+  }
+  
+  .focus:ring-primary-dark {
+    --tw-ring-color: var(--primary-dark);
+  }
+
+  .dark .focus\:ring-primary-dark {
+    --tw-ring-color: var(--primary-dark);
+  }
+
+}
+
+/* Modern Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* Message Status Icons */
+.message-status {
+  @apply inline-flex items-center;
+}
+
+.message-status-sent {
+  @apply text-gray-200;
+}
+
+.message-status-delivered {
+  @apply text-gray-200;
+}
+
+.message-status-read {
+  @apply text-blue-400;
+}
+
+/* Chat List Hover Effects */
+.chat-item {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.chat-item:hover {
+  @apply bg-gray-50 dark:bg-gray-800;
+}
+
+/* Message Input Styles */
+.message-input {
+  @apply bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-primary focus:ring-offset-transparent;
+}
+.dark .message-input:focus {
+  @apply ring-primary-dark;
+}
+
+/* Emoji Picker Container */
+.emoji-picker-container {
+  @apply absolute bottom-full right-0 mb-2 z-50 shadow-lg rounded-lg overflow-hidden;
+  max-height: 350px;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
